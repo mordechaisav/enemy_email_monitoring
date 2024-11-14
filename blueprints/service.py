@@ -1,37 +1,36 @@
-def check_email(data):
-    sentences = data['sentences']
-    new_sen = ""
-    for i in sentences:
-        new_sen += i
-    new_sen.replace('.',' ')
+def analyze_email(content):
+    lines = content['sentences']
+    combined_text = ""
+    for line in lines:
+        combined_text += line
+    combined_text.replace('.', ' ')
 
-    if "hostage" in new_sen:
+    if "hostage" in combined_text:
         return "hostage"
-    elif"explos" in new_sen:
+    elif "explos" in combined_text:
         return "explos"
     else:
         return
 
-def c(sentens):
-    n = sentens.split(' ')
-    for i in n:
-        if i.lower() in ['hostage', 'explos']:
+def contains_keywords(phrase):
+    words = phrase.split(' ')
+    for word in words:
+        if word.lower() in ['hostage', 'explos']:
             return True
     return False
 
+def reorder_sentences(content):
+    lines = content['sentences']
+    combined_text = ""
+    for line in lines:
+        combined_text += line
+    parts = combined_text.split('.')
+    parts.pop()
+    for i in range(len(parts)):
+        if contains_keywords(parts[i]):
+            temp = parts[i]
+            parts[i] = parts[0]
+            parts[0] = temp
 
-def change_senteness(data):
-    sentences = data['sentences']
-    new_sen = ""
-    for i in sentences:
-        new_sen += i
-    n = new_sen.split('.')
-    n.pop()
-    for i in range(len(n)):
-        if c(n[i]):
-            tmp=n[i]
-            n[i] = n[0]
-            n[0] = tmp
-
-    data['sentences'] = n
-    return data
+    content['sentences'] = parts
+    return content
