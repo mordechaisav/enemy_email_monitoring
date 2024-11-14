@@ -19,3 +19,15 @@ producer = KafkaProducer(
     bootstrap_servers=['kafka:9092'],
     value_serializer=lambda v: json.dumps(v).encode('utf-8')
 )
+
+
+def is_suspicious(message):
+    suspicious_words = ['hostage', 'explos']
+    return any(word in message.lower() for word in suspicious_words)
+
+
+for message in consumer:
+    if is_suspicious(message.value['content']):
+        producer.send('messages.explosive', message.value)
+        producer.send('messages.hostage', message.value)
+    print(f"Received message: {message.value}")
